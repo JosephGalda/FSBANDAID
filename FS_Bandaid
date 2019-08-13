@@ -1,13 +1,21 @@
-#!/bin/bash
+#!/bin/bash 
+-x
 FSU="$(df -h / | grep "/dev/sdb"  | awk '{print $5;}')"
 CLU="$( lsof -t ~/console_driver.log)"
 LMD="$(ls -l /data-ext | grep run | tail -n1)"
 TSTAMP="$(date +%s)"
 
-if [[ $FSU -gt "70"* ]] && [[ -lt "100"* ]] && [[ -z ${CLU} ]]
-   then gzip -f ~/console_driver.log; mv ~/console_driver.log.gz /data-ext/${LMD}/console_driver.log.$(date +%s).gz; chown ballbot.ballbot $(LMD)/console_driver.log*.gz 
-elif [[ $FSU -lt "70"* ]] || [[ $FSU == "100"* ]]
-     then exit
-elif [[ -n $CLU ]]
-     then screen -p 1 -x bnr-2-processes -X log; mv ~/console_driver.log ~/console_driver.log.${TSTAMP}; screen -p 1 -x bnr-2-processes -X log; gzip -f ~/console_driver.log.${TSTAMP}; mv ~/console_driver.log.${TSTAMP}.gz /data-ext/${LMD}; chown ballbot.ballbot ${LMD}/console_driver.log*.gz
+if [[ $FSU -gt "70"* ]] && [[ -lt "100"* ]] && [[ -z ${CLU} ]]; then
+   $echo-cmd gzip -f ~/console_driver.log
+   $echo-cmd mv ~/console_driver.log.gz /data-ext/${LMD}/console_driver.log.$(date +%s).gz
+   $echo-cmd chown ballbot.ballbot $(LMD)/console_driver.log*.gz 
+elif [[ $FSU -lt "70"* ]] || [[ $FSU == "100"* ]]; then
+     $echo-cmd exit
+elif [[ -n $CLU ]]; then
+     $echo-cmd screen -p 1 -x bnr-2-processes -X log
+     $echo-cmd mv ~/console_driver.log ~/console_driver.log.${TSTAMP}
+     $echo-cmd screen -p 1 -x bnr-2-processes -X log
+     $echo-cmd gzip -f ~/console_driver.log.${TSTAMP}
+     $echo-cmd mv ~/console_driver.log.${TSTAMP}.gz /data-ext/${LMD}
+     $echo-cmd chown ballbot.ballbot ${LMD}/console_driver.log*.gz
 fi
